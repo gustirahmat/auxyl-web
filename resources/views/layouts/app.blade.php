@@ -33,7 +33,63 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
+                        <li class="nav-item dropdown">
+                            <a id="navbarDropdownAdmin" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <i class="bi bi-speedometer"></i>
+                                Admin <span class="caret"></span>
+                            </a>
 
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownAdmin">
+                                <a class="dropdown-item" href="{{ url('admin') }}">
+                                    Manajemen Role
+                                </a>
+                                <a class="dropdown-item" href="{{ url('employee') }}">
+                                    Manajemen Karyawan
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('supplier') }}">
+                                <i class="bi bi-building"></i>
+                                Supplier
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('category') }}">
+                                <i class="bi bi-tags"></i>
+                                Kategori
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('product') }}">
+                                <i class="bi bi-card-image"></i>
+                                Produk
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('promo') }}">
+                                <i class="bi bi-patch-minus"></i>
+                                Promo
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('order') }}">
+                                <i class="bi bi-receipt"></i>
+                                Pesanan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('shipment') }}">
+                                <i class="bi bi-truck"></i>
+                                Pengiriman
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('report') }}">
+                                <i class="bi bi-bar-chart"></i>
+                                Laporan
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

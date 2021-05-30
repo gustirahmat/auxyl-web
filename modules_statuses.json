@@ -3,5 +3,9 @@
     "Category": true,
     "Employee": true,
     "Product": true,
-    "Admin": true
+    "Admin": true,
+    "Promo": true,
+    "Report": true,
+    "Order": true,
+    "Shipment": true
 }
