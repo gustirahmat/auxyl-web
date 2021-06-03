@@ -25,6 +25,7 @@ class CreateProductsTable extends Migration
             $table->unsignedDecimal('price_selling', 13, 4)->default(0)->comment('Harga jual ke customer');
             $table->unsignedDecimal('price_supplier', 13, 4)->default(0)->comment('Harga beli dari supplier');
             $table->timestampsTz();
+            $table->softDeletesTz();
         });
     }
 

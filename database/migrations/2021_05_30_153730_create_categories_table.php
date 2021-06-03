@@ -19,6 +19,7 @@ class CreateCategoriesTable extends Migration
             $table->string('category_icon')->nullable();
             $table->boolean('category_gender')->default(0)->comment('0 = Wanita; 1 = Pria');
             $table->timestampsTz();
+            $table->softDeletesTz();
         });
     }
 
