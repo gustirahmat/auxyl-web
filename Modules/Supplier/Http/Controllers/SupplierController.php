@@ -15,7 +15,7 @@ class SupplierController extends Controller
     public function validate_data($request, $supplier_id = null)
     {
         $validate = [
-            "supplier_name" => "required|string|max:191|unique:suppliers,supplier_name,{$supplier_id},supplier_id",
+            "supplier_name" => "bail|required|string|max:191|unique:suppliers,supplier_name,{$supplier_id},supplier_id",
             "supplier_phone" => "required|digits_between:8,20|unique:suppliers,supplier_phone,{$supplier_id},supplier_id",
             "supplier_address" => "required|string",
         ];
