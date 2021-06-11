@@ -18,10 +18,10 @@
                     </div>
                     <div class="card-body">
                         @include('layouts.flash-message')
-                        <div class="row">
+                        <div class="row row-cols-1 row-cols-md-3">
                             @forelse($categories as $category)
-                                <div class="col-md-4 mx-0 my-3">
-                                    <div class="card">
+                                <div class="col my-3">
+                                    <div class="card h-100">
                                         <img src="{{ asset($category->category_icon) }}" class="card-img-top" alt="{{ $category->category_name }}" style="height: 150px; max-width: 100%; object-fit: cover">
                                         <div class="card-body">
                                             <h5 class="card-title">{{ $category->category_name }}</h5>
@@ -49,7 +49,7 @@
                                     </div>
                                 </div>
                             @empty
-                                <div class="col-md-12">
+                                <div class="col">
                                     <p>Belum ada data.</p>
                                 </div>
                             @endforelse

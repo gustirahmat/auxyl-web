@@ -14,7 +14,7 @@ use Throwable;
 
 class CategoryController extends Controller
 {
-    public function validate_data($request, $category_id = null)
+    protected function validate_data($request, $category_id = null)
     {
         $validate = [
             "category_name" => "bail|required|string|max:191|unique:categories,category_name,{$category_id},category_id",
