@@ -25,7 +25,7 @@
 </div>
 <div class="form-group">
     <label for="category_icon" class="col-form-label">Pilih Gambar</label>
-    <input type="file" class="form-control-file @error('category_icon') is-invalid @enderror" name="category_icon" id="category_icon" value="{{ old('category_icon') }}" @empty($category->category_icon) required @endempty aria-describedby="helpCategoryIcon">
+    <input type="file" accept="image/*" class="form-control-file @error('category_icon') is-invalid @enderror" name="category_icon" id="category_icon" value="{{ old('category_icon') }}" @empty($category->category_icon) required @endempty aria-describedby="helpCategoryIcon">
     <small id="helpCategoryIcon" class="form-text text-muted">Hanya menerima gambar dengan format jpg, jpeg, atau png maks. 2MB</small>
     @error('category_icon')
     <div class="alert alert-danger">{{ $message }}</div>

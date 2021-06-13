@@ -26,6 +26,9 @@ class CreateProductsTable extends Migration
             $table->unsignedDecimal('price_supplier', 13, 4)->default(0)->comment('Harga beli dari supplier');
             $table->timestampsTz();
             $table->softDeletesTz();
+
+            $table->foreign('supplier_id')->references('supplier_id')->on('suppliers')->onDelete('cascade');
+            $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
         });
     }
 

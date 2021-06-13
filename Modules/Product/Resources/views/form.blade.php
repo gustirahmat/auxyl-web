@@ -4,7 +4,8 @@
     @error('product_name')
     <div class="alert alert-danger">{{ $message }}</div>
     @enderror
-</div><label for="category_id" class="col-form-label">Pilih Kategori</label>
+</div>
+<label for="category_id" class="col-form-label">Pilih Kategori</label>
 <div class="form-group">
     @foreach($categories as $category)
         <div class="form-check form-check-inline">
@@ -70,7 +71,7 @@
     </div>
     <div class="form-group">
         <label for="product_image" class="col-form-label">Pilih Gambar</label>
-        <input type="file" class="form-control-file @error('product_image') is-invalid @enderror" name="product_image" id="product_image" value="{{ old('product_image') }}" @empty($product->product_image) required @endempty aria-describedby="helpProductImage">
+        <input type="file" accept="image/*" class="form-control-file @error('product_image') is-invalid @enderror" name="product_image" id="product_image" value="{{ old('product_image') }}" @empty($product->product_image) required @endempty aria-describedby="helpProductImage">
         <small id="helpProductImage" class="form-text text-muted">Hanya menerima gambar dengan format jpg, jpeg, atau png maks. 2MB</small>
         @error('product_image')
         <div class="alert alert-danger">{{ $message }}</div>

@@ -52,6 +52,6 @@ class Product extends Model
 
     public function relatedStocks(): HasMany
     {
-        return $this->hasMany(ProductStock::class, 'product_id', 'product_id');
+        return $this->hasMany(ProductStock::class, 'product_id', 'product_id')->latest();
     }
 }

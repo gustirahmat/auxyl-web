@@ -14,3 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('product', 'ProductController');
+Route::resource('product/{product}/stock', 'ProductStockController', ['as' => 'product']);
+Route::resource('product/{product}/image', 'ProductPhotoController', ['as' => 'product']);

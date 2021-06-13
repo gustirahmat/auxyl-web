@@ -14,6 +14,17 @@ use Throwable;
 
 class CategoryController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('password.confirm')->only('edit');
+    }
+
     protected function validate_data($request, $category_id = null)
     {
         $validate = [

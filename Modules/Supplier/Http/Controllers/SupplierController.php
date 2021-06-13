@@ -12,6 +12,17 @@ use Throwable;
 
 class SupplierController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('password.confirm')->only('edit');
+    }
+
     public function validate_data($request, $supplier_id = null)
     {
         $validate = [

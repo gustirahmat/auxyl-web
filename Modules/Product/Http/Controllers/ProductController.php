@@ -22,6 +22,17 @@ use Throwable;
 
 class ProductController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('password.confirm')->only('edit');
+    }
+
     protected function validate_data($request, $product_id = null)
     {
         $validate = [
@@ -93,7 +104,7 @@ class ProductController extends Controller
             $product = Product::create($validated_data);
             if ($request->has('product_image')) {
                 $imageName = Str::slug($product->product_name) . '-' . time() . '.' . $request->file('product_image')->getClientOriginalExtension();
-                $request->product_image->storeAs('public/images/product/', $imageName);
+                $request->product_image->storeAs('public/images/product/' . $product->product_id, $imageName);
                 $photo = new ProductPhoto([
                     'image_url' => 'storage/images/product/' . $product->product_id . '/' . $imageName,
                     'image_alt_text' => 'Gambar ' . $product->product_name . ' ke-1'
