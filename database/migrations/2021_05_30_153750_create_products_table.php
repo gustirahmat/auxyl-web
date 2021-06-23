@@ -21,7 +21,7 @@ class CreateProductsTable extends Migration
             $table->string('product_name')->index();
             $table->text('product_description')->nullable();
             $table->text('product_guarantee')->nullable();
-            $table->unsignedDecimal('product_stock')->unsigned()->index()->nullable();
+            $table->unsignedInteger('product_stock')->default(0);
             $table->unsignedDecimal('price_selling', 13, 4)->default(0)->comment('Harga jual ke customer');
             $table->unsignedDecimal('price_supplier', 13, 4)->default(0)->comment('Harga beli dari supplier');
             $table->timestampsTz();
