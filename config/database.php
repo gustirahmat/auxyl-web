@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Str;
 
+$redisUrl = parse_url(env('REDIS_URL'));
+
 return [
 
     /*
@@ -56,10 +58,11 @@ return [
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
-            'strict' => true,
+            'strict' => false,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                PDO::ATTR_EMULATE_PREPARES => true
             ]) : [],
         ],
 
@@ -119,27 +122,29 @@ return [
 
     'redis' => [
 
-        'client' => env('REDIS_CLIENT', 'phpredis'),
+        'client' => env('REDIS_CLIENT', 'predis'),
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'auxyl'), '_').'_database_'),
         ],
 
         'default' => [
             'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
-            'port' => env('REDIS_PORT', '6379'),
+            'host' => env('REDIS_HOST', $redisUrl['host']),
+            'password' => env('REDIS_PASSWORD', $redisUrl['pass']),
+            'port' => env('REDIS_PORT', $redisUrl['port']),
             'database' => env('REDIS_DB', '0'),
+            'read_write_timeout' => 60,
         ],
 
         'cache' => [
             'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'password' => env('REDIS_PASSWORD', null),
-            'port' => env('REDIS_PORT', '6379'),
+            'host' => env('REDIS_HOST', $redisUrl['host']),
+            'password' => env('REDIS_PASSWORD', $redisUrl['pass']),
+            'port' => env('REDIS_PORT', $redisUrl['port']),
             'database' => env('REDIS_CACHE_DB', '1'),
+            'read_write_timeout' => 60,
         ],
 
     ],

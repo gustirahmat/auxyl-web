@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://auxyl-so'),
+    'url' => env('APP_URL', 'https://auxyl-web.test'),
 
     'asset_url' => env('ASSET_URL', null),
 
