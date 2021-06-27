@@ -8,8 +8,10 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^7.2.5|^8.0",
+        "php": "^7.4",
         "ext-json": "*",
+        "ext-pcntl": "*",
+        "ext-redis": "*",
         "barryvdh/laravel-dompdf": "^0.9.0",
         "doctrine/dbal": "v2.4.2",
         "fideloper/proxy": "^4.4",
@@ -18,6 +20,10 @@
         "laravel/tinker": "^2.5",
         "maatwebsite/excel": "^3.1",
         "nwidart/laravel-modules": "^8.2",
+        "phpseclib/bcmath_compat": "1.0.4",
+        "predis/predis": "^1.1",
+        "pusher/pusher-php-server": "^4.1",
+        "scoutapp/scout-apm-laravel": "^1.7",
         "spatie/laravel-permission": "^4.0",
         "spatie/laravel-sluggable": "^2.3",
         "yajra/laravel-datatables-oracle": "~9.0"
