@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,6 +13,4 @@
 |
 */
 
-Route::prefix('promo')->group(function() {
-    Route::get('/', 'PromoController@index');
-});
+Route::resource('promo', 'PromoController');

@@ -22,11 +22,14 @@
                             <div class="card h-100">
                                 <img src="{{ asset($product->relatedPhotos[0]->image_url ?? 'image/AdobeStock_57930538.jpeg') }}" class="card-img-top" alt="{{ $product->relatedPhotos[0]->image_alt_text ?? 'Photo coming soon' }}" style="height: 150px; max-width: 100%; object-fit: cover">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ $product->product_name }}</h5>
-                                    <p class="card-text">{{ $product->price_selling }}</p>
+                                    <h5 class="card-title text-truncate">{{ $product->product_name }}</h5>
+                                    <p class="card-text">
+                                        <small>Harga Jual : </small><br>
+                                        {{ number_format($product->price_selling ?? 0, 0, ',', '.') }}
+                                    </p>
                                     <p class="card-text">{{ $product->product_description }}</p>
                                     <p class="card-text text-muted">
-                                        Stok : {{ $product->product_stock }}
+                                        Stok : {{ number_format($product->product_stock ?? 0, 0, ',', '.') }}
                                         <a href="{{ route('product.stock.index', ['product' => $product->product_id]) }}">Lihat histori</a>
                                     </p>
                                     <p class="card-text"><small class="text-muted">Terakhir diperbarui {{ $product->updated_at->diffForHumans() }}</small></p>

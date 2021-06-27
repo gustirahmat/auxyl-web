@@ -2,78 +2,182 @@
 
 namespace Modules\Promo\Http\Controllers;
 
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Modules\Promo\Entities\Promo;
+use Modules\Promo\Entities\Product;
+use Throwable;
 
 class PromoController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('password.confirm')->only('edit');
+    }
+
+    protected function validate_data($request, $promo_id = null)
+    {
+        $validate = [
+            "promo_name" => "bail|required|string|max:191|unique:promos,promo_name,{$promo_id},promo_id",
+            "promo_started_at" => "required|date",
+            "promo_finished_at" => "required|date|after:promo_started_at",
+            "promo_desc" => "nullable|string",
+            "promo_terms" => "nullable|string",
+            "promo_banner" => "required|image|max:2048",
+            "products" => "required|array",
+            "products.*.product_id" => "required|integer",
+            "products.*.promo_product_stock" => "required|integer|min:1",
+            "products.*.promo_price_supplier" => "required|numeric|min:0",
+            "products.*.promo_price_selling" => "required|numeric|min:1|gte:products.*.promo_price_supplier",
+        ];
+
+        return $request->validate($validate);
+    }
+
     /**
      * Display a listing of the resource.
      * @return Renderable
      */
     public function index()
     {
-        return view('promo::index');
+        $promos = Promo::withCount('relatedProducts')->get();
+
+        return view('promo::index', ['promos' => $promos]);
     }
 
     /**
      * Show the form for creating a new resource.
      * @return Renderable
      */
-    public function create()
+    public function create(): Renderable
     {
-        return view('promo::create');
+        $products = Product::all();
+
+        return view('promo::create', ['products' => $products]);
     }
 
     /**
      * Store a newly created resource in storage.
      * @param Request $request
-     * @return Renderable
+     * @return Application|RedirectResponse|Redirector
      */
     public function store(Request $request)
     {
-        //
+        $validated_data = $this->validate_data($request);
+
+        try {
+            DB::beginTransaction();
+
+            if ($request->has('promo_banner')) {
+                $imageName = Str::slug($validated_data['promo_name']) . '.' . $request->file('promo_banner')->getClientOriginalExtension();
+                $request->promo_banner->storeAs('public/images/promo/', $imageName);
+                $validated_data['promo_banner'] = 'storage/images/promo/' . $imageName;
+            }
+            $promo = Promo::with('relatedProducts')->create($validated_data);
+
+            foreach ($validated_data['products'] as $product) {
+                $promo->relatedProducts()->attach($product['product_id'], [
+                    'promo_product_stock' => $product['promo_product_stock'],
+                    'promo_price_supplier' => $product['promo_price_supplier'],
+                    'promo_price_selling' => $product['promo_price_selling'],
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect('promo')->with('success', 'Berhasil menambah promo ' . $promo->promo_name);
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return back()->withErrors($e->getMessage())->withInput();
+        }
     }
 
     /**
      * Show the specified resource.
-     * @param int $id
+     * @param Promo $promo
      * @return Renderable
      */
-    public function show($id)
+    public function show(Promo $promo): Renderable
     {
-        return view('promo::show');
+        return view('promo::show', ['promo' => $promo]);
     }
 
     /**
      * Show the form for editing the specified resource.
-     * @param int $id
+     * @param Promo $promo
      * @return Renderable
      */
-    public function edit($id)
+    public function edit(Promo $promo): Renderable
     {
-        return view('promo::edit');
+        return view('promo::edit', ['promo' => $promo]);
     }
 
     /**
      * Update the specified resource in storage.
      * @param Request $request
-     * @param int $id
-     * @return Renderable
+     * @param Promo $promo
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Promo $promo): RedirectResponse
     {
-        //
+        $validated_data = $this->validate_data($request, $promo->promo_id);
+
+        try {
+            DB::beginTransaction();
+
+            if ($request->has('promo_banner')) {
+                Storage::delete('public/images/promo/' . substr($promo->promo_banner, 23));
+                $imageName = Str::slug($validated_data['promo_name']) . '.' . $request->file('promo_banner')->getClientOriginalExtension();
+                $request->promo_banner->storeAs('public/images/promo/', $imageName);
+                $validated_data['promo_banner'] = 'storage/images/promo/' . $imageName;
+            }
+            $promo->update($validated_data);
+
+            DB::commit();
+
+            return redirect()->route('promo.index')->with('success', 'Berhasil mengubah promo ' . $promo->promo_name);
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return back()->withErrors($e->getMessage())->withInput();
+        }
     }
 
     /**
      * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
+     * @param Promo $promo
+     * @return RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(Promo $promo): RedirectResponse
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            Storage::delete('public/images/promo/' . substr($promo->promo_banner, 23));
+            $promo->relatedProducts()->detach();
+            $promo->delete();
+
+            DB::commit();
+
+            return redirect()->route('promo.index')->with('success', 'Berhasil menghapus promo ' . $promo->promo_name);
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return back()->withErrors($e->getMessage());
+        }
     }
 }
