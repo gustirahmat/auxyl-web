@@ -20,7 +20,7 @@
         "laravel/tinker": "^2.5",
         "maatwebsite/excel": "^3.1",
         "nwidart/laravel-modules": "^8.2",
-        "phpseclib/bcmath_compat": "1.0.4",
+        "phpseclib/bcmath_compat": "^2.0.0",
         "predis/predis": "^1.1",
         "pusher/pusher-php-server": "^4.1",
         "scoutapp/scout-apm-laravel": "^1.7",
