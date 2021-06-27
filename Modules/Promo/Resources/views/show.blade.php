@@ -88,7 +88,7 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center align-middle">
                                         <h5 class="card-title text-truncate">{{ $product->product_name }}</h5>
-                                        <p class="card-text text-muted">Stok:{{ number_format($product->pivot->promo_product_stock ?? 0, 0, ',', '.') }}</p>
+                                        <p class="text-muted">Stok:{{ number_format($product->pivot->promo_product_stock ?? 0, 0, ',', '.') }}</p>
                                     </div>
                                     <p class="card-text">
                                         <small>Harga Jual : </small><br>

@@ -25,7 +25,7 @@
                                     <h5 class="card-title">{{ $category->category_name }}</h5>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <p class="card-text">{{ $category->related_products_count }} produk</p>
-                                        <p class="card-text text-muted">Gender : {{ $category->category_gender_text }}</p>
+                                        <p class="text-muted">Gender : {{ $category->category_gender_text }}</p>
                                     </div>
                                     <p class="card-text"><small class="text-muted">Terakhir diperbarui {{ $category->updated_at->diffForHumans() }}</small></p>
                                     <hr>

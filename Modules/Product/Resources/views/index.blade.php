@@ -28,7 +28,7 @@
                                         {{ number_format($product->price_selling ?? 0, 0, ',', '.') }}
                                     </p>
                                     <p class="card-text">{{ $product->product_description }}</p>
-                                    <p class="card-text text-muted">
+                                    <p class="text-muted">
                                         Stok : {{ number_format($product->product_stock ?? 0, 0, ',', '.') }}
                                         <a href="{{ route('product.stock.index', ['product' => $product->product_id]) }}">Lihat histori</a>
                                     </p>
