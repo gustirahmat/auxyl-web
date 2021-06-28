@@ -5,9 +5,11 @@ namespace Modules\Product\Http\Controllers;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use JD\Cloudder\Facades\Cloudder;
 use Modules\Product\Entities\Product;
 use Modules\Product\Entities\ProductPhoto;
 use Illuminate\Http\Request;
@@ -60,7 +62,7 @@ class ProductPhotoController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param $product_id
+     * @param int $product_id
      * @param Request $request
      * @return RedirectResponse
      */
@@ -72,10 +74,26 @@ class ProductPhotoController extends Controller
             $product = Product::with('relatedPhotos')->findOrFail($product_id);
 
             if ($request->has('image_url')) {
-                $imageName = Str::slug($product->product_name) . '-' . time() . '.' . $request->file('image_url')->getClientOriginalExtension();
-                $request->image_url->storeAs('public/images/product/' . $product->product_id, $imageName);
+                if (App::environment('production')) {
+                    $image_name = $request->file('image_url')->getRealPath();
+                    Cloudder::upload($image_name, null, array(
+                        'folder' => 'images/product/' . $product->product_id,
+                        'overwrite' => true,
+                        'resource_type' => 'image'
+                    ));
+
+                    list($width, $height) = getimagesize($image_name);
+                    $image_url = Cloudder::secureShow(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);
+                    $path = $image_url;
+                } else {
+                    $image_name = Str::slug($product->product_name) . '-' . time() . '.' . $request->file('image_url')->getClientOriginalExtension();
+                    $path = $request->file('image_url')->storeAs(
+                        'images/product/' . $product->product_id, $image_name, 'public'
+                    );
+                }
+
                 $photo = new ProductPhoto([
-                    'image_url' => 'storage/images/product/' . $product->product_id . '/' . $imageName,
+                    'image_url' => $path,
                     'image_alt_text' => $validated_data['image_alt_text'],
                 ]);
                 $product->relatedPhotos()->save($photo);
@@ -133,8 +151,14 @@ class ProductPhotoController extends Controller
         try {
             $photo = ProductPhoto::findOrFail($productPhoto);
             if (isset($photo->image_url)) {
-                if (Storage::disk('public')->exists(ltrim($photo->image_url, 'storage/'))) {
-                    Storage::disk('public')->delete(ltrim($photo->image_url, 'storage/'));
+                if (App::environment('production')) {
+                    Cloudder::delete($photo->image_url, array(
+                        'resource_type' => 'image'
+                    ));
+                } else {
+                    if (Storage::disk('public')->exists($photo->image_url)) {
+                        Storage::disk('public')->delete($photo->image_url);
+                    }
                 }
             }
             $photo->delete();

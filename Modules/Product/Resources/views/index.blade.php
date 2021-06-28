@@ -20,7 +20,7 @@
                     @forelse($products as $product)
                         <div class="col my-3">
                             <div class="card h-100">
-                                <img src="{{ asset($product->relatedPhotos[0]->image_url ?? 'image/AdobeStock_57930538.jpeg') }}" class="card-img-top" alt="{{ $product->relatedPhotos[0]->image_alt_text ?? 'Photo coming soon' }}" style="height: 150px; max-width: 100%; object-fit: cover">
+                                <img src="{{ app()->environment('production') ? $product->relatedPhotos[0]->image_url : asset($product->relatedPhotos[0]->image_url ?? 'image/AdobeStock_57930538.jpeg') }}" class="card-img-top" alt="{{ $product->relatedPhotos[0]->image_alt_text ?? 'Photo coming soon' }}" style="height: 150px; max-width: 100%; object-fit: cover">
                                 <div class="card-body">
                                     <h5 class="card-title text-truncate">{{ $product->product_name }}</h5>
                                     <p class="card-text">

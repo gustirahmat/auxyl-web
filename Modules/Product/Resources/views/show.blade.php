@@ -59,7 +59,7 @@
                     @forelse($product->relatedPhotos as $photo)
                         <div class="item">
                             <figure>
-                                <img src="{{ asset($photo->image_url) }}" class="d-block w-100" alt="{{ $photo->image_alt_text }}">
+                                <img src="{{ app()->environment('production') ? $photo->image_url : asset($photo->image_url) }}" class="d-block w-100" alt="{{ $photo->image_alt_text }}">
                                 <figcaption class="d-flex justify-content-between align-items-center my-1">
                                     {{ $photo->image_alt_text }}
                                     <form action="{{ route('product.image.destroy', ['product' => $product->product_id, 'image' => $photo->id]) }}" method="post" onsubmit="confirm('Apakah Anda yakin ingin menghapus ini?')">

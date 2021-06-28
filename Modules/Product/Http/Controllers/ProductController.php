@@ -9,10 +9,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use JD\Cloudder\Facades\Cloudder;
 use Modules\Category\Entities\Category;
 use Modules\Product\Entities\Product;
 use Modules\Product\Entities\ProductPhoto;
@@ -103,11 +105,27 @@ class ProductController extends Controller
 
             $product = Product::create($validated_data);
             if ($request->has('product_image')) {
-                $imageName = Str::slug($product->product_name) . '-' . time() . '.' . $request->file('product_image')->getClientOriginalExtension();
-                $request->product_image->storeAs('public/images/product/' . $product->product_id, $imageName);
+                if (App::environment('production')) {
+                    $image_name = $request->file('product_image')->getRealPath();
+                    Cloudder::upload($image_name, null, array(
+                        'folder' => 'images/product/' . $product->product_id,
+                        'overwrite' => true,
+                        'resource_type' => 'image'
+                    ));
+
+                    list($width, $height) = getimagesize($image_name);
+                    $product_image = Cloudder::secureShow(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);
+                    $path = $product_image;
+                } else {
+                    $image_name = Str::slug($product->product_name) . '-' . time() . '.' . $request->file('product_image')->getClientOriginalExtension();
+                    $path = $request->file('product_image')->storeAs(
+                        'images/product/' . $product->product_id, $image_name, 'public'
+                    );
+                }
+
                 $photo = new ProductPhoto([
-                    'image_url' => 'storage/images/product/' . $product->product_id . '/' . $imageName,
-                    'image_alt_text' => 'Gambar ' . $product->product_name . ' ke-1'
+                    'product_image' => $path,
+                    'image_alt_text' => 'Gambar ' . $product->product_name
                 ]);
                 $product->relatedPhotos()->save($photo);
             }
