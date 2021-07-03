@@ -3,8 +3,11 @@
 namespace Modules\Product\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Category\Entities\Category;
+use Modules\Supplier\Entities\Supplier;
 
 class Product extends Model
 {
@@ -44,6 +47,16 @@ class Product extends Model
         'price_selling' => 'decimal:0',
         'price_supplier' => 'decimal:0',
     ];
+
+    public function relatedCategory(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'category_id');
+    }
+
+    public function relatedSupplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class, 'supplier_id', 'supplier_id');
+    }
 
     public function relatedPhotos(): HasMany
     {

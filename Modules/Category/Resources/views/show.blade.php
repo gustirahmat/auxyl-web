@@ -3,47 +3,48 @@
 @section('content')
     <div class="container-fluid mb-3">
         <div class="card">
-            <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title">
-                        Detail Supplier
-                    </h5>
-                    <a href="{{ route('supplier.edit', $supplier->supplier_id) }}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-pencil-square"></i>
-                        Edit Supplier
-                    </a>
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="{{ asset($category->category_icon) }}" class="d-block w-100" alt="{{ $category->category_name }}" style="max-height: 400px; width: auto; object-fit: cover;">
                 </div>
-            </div>
-            <div class="card-body">
-                @include('layouts.flash-message')
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover table-borderless">
-                        <tr>
-                            <td>Nama Supplier</td>
-                            <td>:</td>
-                            <th>{{ $supplier->supplier_name }}</th>
-                        </tr>
-                        <tr>
-                            <td>No. Telp. / WhatsApp (WA)</td>
-                            <td>:</td>
-                            <th>{{ $supplier->supplier_phone }}</th>
-                        </tr>
-                        <tr>
-                            <td>Alamat Supplier</td>
-                            <td>:</td>
-                            <th>{{ $supplier->supplier_address }}</th>
-                        </tr>
-                        <tr>
-                            <td>Dibuat Pada</td>
-                            <td>:</td>
-                            <th>{{ $supplier->created_at->format('Y.m.d H:i') }}</th>
-                        </tr>
-                        <tr>
-                            <td>Terakhir Diperbarui</td>
-                            <td>:</td>
-                            <th>{{ $supplier->updated_at->diffForHumans() }}</th>
-                        </tr>
-                    </table>
+                <div class="col-md-8">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">
+                                Detail Kategori
+                            </h5>
+                            <a href="{{ route('category.edit', $category->category_id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil-square"></i>
+                                Edit Kategori
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover table-borderless">
+                                <tr>
+                                    <td>Nama Kategori</td>
+                                    <td>:</td>
+                                    <th>{{ $category->category_name }}</th>
+                                </tr>
+                                <tr>
+                                    <td>Gender</td>
+                                    <td>:</td>
+                                    <th>{{ $category->category_gender_text }}</th>
+                                </tr>
+                                <tr>
+                                    <td>Dibuat Pada</td>
+                                    <td>:</td>
+                                    <th>{{ $category->created_at->format('Y.m.d H:i') }}</th>
+                                </tr>
+                                <tr>
+                                    <td>Terakhir Diperbarui</td>
+                                    <td>:</td>
+                                    <th>{{ $category->updated_at->diffForHumans() }}</th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,23 +54,23 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title">
-                        Produk Punya Supplier
+                        Produk dalam Kategori
                     </h5>
-                    <a href="{{ route('product.create', ['supplier_id' => $supplier->supplier_id]) }}" class="btn btn-sm btn-outline-primary">
+                    <a href="{{ route('product.create', ['category_id' => $category->category_id]) }}" class="btn btn-sm btn-outline-primary">
                         <i class="bi bi-plus-circle"></i>
-                        Tambah Produk
+                        Tambah Produk Baru
                     </a>
                 </div>
             </div>
             <div class="card-body">
                 <div class="row row-cols-1 row-cols-md-4">
-                    @forelse($supplier->relatedProducts as $product)
+                    @forelse($category->relatedProducts as $product)
                         <div class="col my-3">
                             <div class="card h-100">
                                 <img src="{{ asset($product->relatedPhotos[0]->image_url ?? 'image/AdobeStock_57930538.jpeg') }}" class="card-img-top" alt="{{ $product->relatedPhotos[0]->image_alt_text ?? 'Photo coming soon' }}" style="height: 150px; max-width: 100%; object-fit: cover">
                                 <div class="card-body">
-                                    <a href="{{ route('category.show', $product->category_id) }}">
-                                        <small>Kategori {{ $product->relatedCategory->category_name }}</small>
+                                    <a href="{{ route('supplier.show', $product->supplier_id) }}">
+                                        <small>Supplier {{ $product->relatedSupplier->supplier_name }}</small>
                                     </a>
                                     <div class="d-flex justify-content-between align-items-center align-middle">
                                         <h5 class="card-title text-truncate">{{ $product->product_name }}</h5>

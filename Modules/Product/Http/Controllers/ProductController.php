@@ -65,9 +65,10 @@ class ProductController extends Controller
 
     /**
      * Show the form for creating a new resource.
+     * @param Request $request
      * @return Renderable
      */
-    public function create(): Renderable
+    public function create(Request $request): Renderable
     {
         $categories = Category::all();
         $suppliers = Supplier::all();

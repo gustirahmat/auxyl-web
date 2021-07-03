@@ -110,7 +110,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category): Renderable
     {
-        return view('category::show', ['category' => $category]);
+        return view('category::show', ['category' => $category->loadMissing('relatedProducts')]);
     }
 
     /**

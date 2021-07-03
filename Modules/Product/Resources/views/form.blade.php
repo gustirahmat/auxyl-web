@@ -9,7 +9,7 @@
 <div class="form-group">
     @foreach($categories as $category)
         <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="category_id" id="category{{ $category->category_id }}" value="{{ $category->category_id }}" {{ ($product->category_id ?? old('category_id')) == $category->category_id ? 'checked' : '' }}>
+            <input class="form-check-input" type="radio" name="category_id" id="category{{ $category->category_id }}" value="{{ $category->category_id }}" {{ ($product->category_id ?? (request()->query('category_id') ?? old('category_id'))) == $category->category_id ? 'checked' : '' }}>
             <label class="form-check-label" for="category{{ $category->category_id }}">{{ $category->category_name }}</label>
         </div>
     @endforeach
@@ -22,7 +22,7 @@
     <select class="form-control @error('product_name') is-invalid @enderror" name="supplier_id" id="supplier_id" required>
         <option disabled selected>Silahkan pilih</option>
         @forelse($suppliers as $supplier)
-            <option value="{{ $supplier->supplier_id }}" {{ $product->supplier_id ?? old('supplier_id') == $supplier->supplier_id ? 'selected' : '' }}>{{ $supplier->supplier_name }}</option>
+            <option value="{{ $supplier->supplier_id }}" {{ $product->supplier_id ?? (request()->query('supplier_id') ?? old('supplier_id')) == $supplier->supplier_id ? 'selected' : '' }}>{{ $supplier->supplier_name }}</option>
         @empty
             <option disabled>Belum ada Supplier terdaftar</option>
         @endforelse
