@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Order\Http\Controllers;
 
-use App\Models\Order;
+use Modules\Order\Entities\OrderStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 
-class OrderController extends Controller
+class OrderStatusController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -42,10 +43,10 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Order $order
+     * @param OrderStatus $orderStatus
      * @return Response
      */
-    public function show(Order $order)
+    public function show(OrderStatus $orderStatus)
     {
         //
     }
@@ -53,10 +54,10 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Order $order
+     * @param OrderStatus $orderStatus
      * @return Response
      */
-    public function edit(Order $order)
+    public function edit(OrderStatus $orderStatus)
     {
         //
     }
@@ -65,10 +66,10 @@ class OrderController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param Order $order
+     * @param OrderStatus $orderStatus
      * @return Response
      */
-    public function update(Request $request, Order $order)
+    public function update(Request $request, OrderStatus $orderStatus)
     {
         //
     }
@@ -76,10 +77,10 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Order $order
+     * @param OrderStatus $orderStatus
      * @return Response
      */
-    public function destroy(Order $order)
+    public function destroy(OrderStatus $orderStatus)
     {
         //
     }

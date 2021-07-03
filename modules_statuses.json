@@ -7,5 +7,6 @@
     "Promo": true,
     "Report": true,
     "Order": true,
-    "Shipment": true
+    "Shipment": true,
+    "Complain": true
 }

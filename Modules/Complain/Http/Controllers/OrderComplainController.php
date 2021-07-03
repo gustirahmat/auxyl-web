@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Complain\Http\Controllers;
 
 use App\Models\OrderComplain;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Nwidart\Modules\Routing\Controller;
 
 class OrderComplainController extends Controller
 {

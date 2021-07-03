@@ -83,6 +83,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ url('complain') }}">
+                                <i class="bi bi-headset"></i>
+                                Komplain
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ url('report') }}">
                                 <i class="bi bi-bar-chart"></i>
                                 Laporan

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Order\Http\Controllers;
 
-use App\Models\OrderProduct;
+use Modules\Order\Entities\OrderProduct;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 
 class OrderProductController extends Controller
 {
