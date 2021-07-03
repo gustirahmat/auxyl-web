@@ -6,9 +6,11 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use JD\Cloudder\Facades\Cloudder;
 use Modules\Category\Entities\Category;
 use Throwable;
 
@@ -69,9 +71,25 @@ class CategoryController extends Controller
             DB::beginTransaction();
 
             if ($request->has('category_icon')) {
-                $imageName = Str::slug($validated_data['category_name']) . '.' . $request->file('category_icon')->getClientOriginalExtension();
-                $request->category_icon->storeAs('public/images/category/', $imageName);
-                $validated_data['category_icon'] = 'storage/images/category/' . $imageName;
+                if (App::environment('production')) {
+                    $image_name = $request->file('category_icon')->getRealPath();
+                    Cloudder::upload($image_name, null, array(
+                        'folder' => 'images/category',
+                        'overwrite' => true,
+                        'resource_type' => 'image'
+                    ));
+
+                    list($width, $height) = getimagesize($image_name);
+                    $category_icon = Cloudder::secureShow(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);
+                    $path = $category_icon;
+                } else {
+                    $image_name = Str::slug($validated_data['category_name']) . '.' . $request->file('category_icon')->getClientOriginalExtension();
+                    $path = $request->file('category_icon')->storeAs(
+                        'images/category', $image_name, 'public'
+                    );
+                }
+
+                $validated_data['category_icon'] = $path;
             }
             $category = Category::create($validated_data);
 
@@ -119,10 +137,30 @@ class CategoryController extends Controller
             DB::beginTransaction();
 
             if ($request->has('category_icon')) {
-                Storage::delete('public/images/category/' . substr($category->category_icon, 23));
-                $imageName = Str::slug($validated_data['category_name']) . '.' . $request->file('category_icon')->getClientOriginalExtension();
-                $request->category_icon->storeAs('public/images/category/', $imageName);
-                $validated_data['category_icon'] = 'storage/images/category/' . $imageName;
+                if (App::environment('production')) {
+                    Cloudder::delete($category->category_icon, array(
+                        'resource_type' => 'image'
+                    ));
+
+                    $image_name = $request->file('category_icon')->getRealPath();
+                    Cloudder::upload($image_name, null, array(
+                        'folder' => 'images/category',
+                        'overwrite' => true,
+                        'resource_type' => 'image'
+                    ));
+
+                    list($width, $height) = getimagesize($image_name);
+                    $category_icon = Cloudder::secureShow(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);
+                    $path = $category_icon;
+                } else {
+                    Storage::disk('public')->delete($category->category_icon);
+                    $image_name = Str::slug($validated_data['category_name']) . '.' . $request->file('category_icon')->getClientOriginalExtension();
+                    $path = $request->file('category_icon')->storeAs(
+                        'images/category', $image_name, 'public'
+                    );
+                }
+
+                $validated_data['category_icon'] = $path;
             }
             $category->update($validated_data);
 
@@ -146,7 +184,13 @@ class CategoryController extends Controller
         try {
             DB::beginTransaction();
 
-            Storage::delete('public/images/category/' . substr($category->category_icon, 23));
+            if (App::environment('production')) {
+                Cloudder::delete($category->category_icon, array(
+                    'resource_type' => 'image'
+                ));
+            } else {
+                Storage::disk('public')->delete($category->category_icon);
+            }
             $category->delete();
 
             DB::commit();
