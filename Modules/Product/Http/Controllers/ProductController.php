@@ -125,7 +125,7 @@ class ProductController extends Controller
                 }
 
                 $photo = new ProductPhoto([
-                    'product_image' => $path,
+                    'image_url' => $path,
                     'image_alt_text' => 'Gambar ' . $product->product_name
                 ]);
                 $product->relatedPhotos()->save($photo);
