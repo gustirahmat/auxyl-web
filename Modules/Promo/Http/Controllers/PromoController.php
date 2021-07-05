@@ -8,9 +8,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use JD\Cloudder\Facades\Cloudder;
 use Modules\Promo\Entities\Promo;
 use Modules\Promo\Entities\Product;
 use Throwable;
@@ -82,9 +84,25 @@ class PromoController extends Controller
             DB::beginTransaction();
 
             if ($request->has('promo_banner')) {
-                $imageName = Str::slug($validated_data['promo_name']) . '.' . $request->file('promo_banner')->getClientOriginalExtension();
-                $request->promo_banner->storeAs('public/images/promo/', $imageName);
-                $validated_data['promo_banner'] = 'storage/images/promo/' . $imageName;
+                if (App::environment('production')) {
+                    $image_name = $request->file('promo_banner')->getRealPath();
+                    Cloudder::upload($image_name, null, array(
+                        'folder' => 'images/promo',
+                        'overwrite' => true,
+                        'resource_type' => 'image'
+                    ));
+
+                    list($width, $height) = getimagesize($image_name);
+                    $promo_banner = Cloudder::secureShow(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);
+                    $path = $promo_banner;
+                } else {
+                    $image_name = Str::slug($validated_data['promo_name']) . '.' . $request->file('promo_banner')->getClientOriginalExtension();
+                    $path = $request->file('promo_banner')->storeAs(
+                        'images/category', $image_name, 'public'
+                    );
+                }
+
+                $validated_data['promo_banner'] = $path;
             }
             $promo = Promo::with('relatedProducts')->create($validated_data);
 
@@ -140,10 +158,30 @@ class PromoController extends Controller
             DB::beginTransaction();
 
             if ($request->has('promo_banner')) {
-                Storage::delete('public/images/promo/' . substr($promo->promo_banner, 23));
-                $imageName = Str::slug($validated_data['promo_name']) . '.' . $request->file('promo_banner')->getClientOriginalExtension();
-                $request->promo_banner->storeAs('public/images/promo/', $imageName);
-                $validated_data['promo_banner'] = 'storage/images/promo/' . $imageName;
+                if (App::environment('production')) {
+                    Cloudder::delete($promo->promo_banner, array(
+                        'resource_type' => 'image'
+                    ));
+
+                    $image_name = $request->file('promo_banner')->getRealPath();
+                    Cloudder::upload($image_name, null, array(
+                        'folder' => 'images/promo',
+                        'overwrite' => true,
+                        'resource_type' => 'image'
+                    ));
+
+                    list($width, $height) = getimagesize($image_name);
+                    $promo_banner = Cloudder::secureShow(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);
+                    $path = $promo_banner;
+                } else {
+                    Storage::disk('public')->delete($promo->promo_banner);
+                    $image_name = Str::slug($validated_data['promo_name']) . '.' . $request->file('promo_banner')->getClientOriginalExtension();
+                    $path = $request->file('promo_banner')->storeAs(
+                        'images/promo', $image_name, 'public'
+                    );
+                }
+
+                $validated_data['promo_banner'] = $path;
             }
             $promo->update($validated_data);
 
@@ -167,7 +205,13 @@ class PromoController extends Controller
         try {
             DB::beginTransaction();
 
-            Storage::delete('public/images/promo/' . substr($promo->promo_banner, 23));
+            if (App::environment('production')) {
+                Cloudder::delete($promo->promo_banner, array(
+                    'resource_type' => 'image'
+                ));
+            } else {
+                Storage::disk('public')->delete($promo->promo_banner);
+            }
             $promo->relatedProducts()->detach();
             $promo->delete();
 
