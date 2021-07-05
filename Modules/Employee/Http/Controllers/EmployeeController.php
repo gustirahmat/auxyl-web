@@ -5,16 +5,41 @@ namespace Modules\Employee\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\Employee\Entities\Employee;
 
 class EmployeeController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('password.confirm')->only('edit');
+    }
+
+    protected function validate_data($request, $category_id = null)
+    {
+        $validate = [
+            "category_name" => "bail|required|string|max:191|unique:categories,category_name,{$category_id},category_id",
+            "category_icon" => "nullable|image|max:2048",
+            "category_gender" => "required|integer",
+        ];
+
+        return $request->validate($validate);
+    }
+
     /**
      * Display a listing of the resource.
      * @return Renderable
      */
     public function index()
     {
-        return view('employee::index');
+        $employees = Employee::all();
+
+        return view('employee::index', ['employees' => $employees]);
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,3 +16,4 @@
 Route::prefix('employee')->group(function() {
     Route::get('/', 'EmployeeController@index');
 });
+Route::resource('employee', 'EmployeeController');
