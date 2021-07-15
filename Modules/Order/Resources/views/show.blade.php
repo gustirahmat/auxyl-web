@@ -4,15 +4,7 @@
     <div class="container-fluid mb-3">
         <div class="card">
             <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title">
-                        Detail Pesanan
-                    </h5>
-                    <a href="{{ route('order.edit', $order->order_id) }}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-pencil-square"></i>
-                        Verifikasi Pembayaran
-                    </a>
-                </div>
+                <h5 class="card-title">Detail Pesanan</h5>
             </div>
             <div class="card-body">
                 @include('layouts.flash-message')
@@ -51,6 +43,24 @@
                             <td>:</td>
                             <th>
                                 {{ number_format($order->order_total ?? 0, 0, ',', '.') }}
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>Bukti Bayar</td>
+                            <td>:</td>
+                            <th>
+                                @isset($order->order_payment_proof)
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p>{{ $order->order_payment_proof }}</p>
+                                        <div>
+                                            <a href="{{ $order->order_payment_proof }}">Lihat</a>
+                                            &nbsp;&nbsp;&nbsp;
+                                            <a href="#" onclick="alert('Segera hadir!')">Verifikasi</a>
+                                        </div>
+                                    </div>
+                                @else
+                                    Belum ada.
+                                @endisset
                             </th>
                         </tr>
                         <tr>
@@ -104,46 +114,6 @@
     <div class="container-fluid my-3">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title">Histori Pesanan</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered">
-                        <thead class="text-center">
-                        <tr>
-                            <th class="align-middle" rowspan="2">No</th>
-                            <th class="align-middle" rowspan="2">Aksi</th>
-                            <th class="align-middle" rowspan="2">Catatan</th>
-                            <th colspan="2">Dibuat Pada</th>
-                        </tr>
-                        <tr>
-                            <th>Jam</th>
-                            <th>Tanggal</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($order->relatedStatuses as $status)
-                            <tr class="text-center">
-                                <td>{{ $loop->iteration }}</td>
-                                <td>
-                                    <label class="badge badge-{{ $status->status_color }}">
-                                        {{ $status->status_code }}
-                                    </label>
-                                </td>
-                                <td class="text-left">{{ ucwords($status->status_comment) }}</td>
-                                <td>{{ $status->created_at->translatedFormat('H:i:s') }}</td>
-                                <td>{{ $status->created_at->translatedFormat('d-M-Y') }}</td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="container-fluid mt-3">
-        <div class="card">
-            <div class="card-header">
                 <h5 class="card-title">Produk Yg Dibeli</h5>
             </div>
             <div class="card-body">
@@ -182,6 +152,42 @@
                             <p>Belum ada data.</p>
                         </div>
                     @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid mt-3">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Histori Pesanan</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered">
+                        <thead class="text-center">
+                        <tr>
+                            <th class="align-middle" rowspan="2">No</th>
+                            <th class="align-middle" rowspan="2">Status</th>
+                            <th class="align-middle" rowspan="2">Catatan</th>
+                            <th colspan="2">Dibuat Pada</th>
+                        </tr>
+                        <tr>
+                            <th>Jam</th>
+                            <th>Tanggal</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($order->relatedStatuses as $status)
+                            <tr class="text-center">
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ ucwords($status->status_action) }}</td>
+                                <td class="text-left">{{ ucwords($status->status_comment) }}</td>
+                                <td>{{ $status->created_at->translatedFormat('H:i:s') }}</td>
+                                <td>{{ $status->created_at->translatedFormat('d-M-Y') }}</td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
