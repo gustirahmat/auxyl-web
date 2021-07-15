@@ -49,11 +49,11 @@ class OrderController extends Controller
      * Display the specified resource.
      *
      * @param Order $order
-     * @return Response
+     * @return Application|Factory|View
      */
     public function show(Order $order)
     {
-        return view('order::show');
+        return view('order::show', ['order' => $order->loadMissing('relatedCustomer', 'relatedDelivery', 'relatedStatuses')]);
     }
 
     /**

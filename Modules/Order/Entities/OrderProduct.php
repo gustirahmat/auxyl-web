@@ -4,9 +4,11 @@ namespace Modules\Order\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Category\Entities\Category;
 use Modules\Complain\Entities\Order;
-use Modules\Promo\Entities\Product;
+use Modules\Product\Entities\ProductPhoto;
+use Modules\Product\Entities\Product;
 
 class OrderProduct extends Model
 {
@@ -24,8 +26,8 @@ class OrderProduct extends Model
      */
     protected $fillable = [
         'order_id',
+        'promo_id',
         'product_id',
-        'supplier_id',
         'category_id',
         'order_product_qty',
         'order_product_price',
@@ -51,6 +53,11 @@ class OrderProduct extends Model
     public function relatedProduct(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'product_id');
+    }
+
+    public function relatedPhotos(): HasMany
+    {
+        return $this->hasMany(ProductPhoto::class, 'product_id', 'product_id');
     }
 
     public function relatedCategory(): BelongsTo
