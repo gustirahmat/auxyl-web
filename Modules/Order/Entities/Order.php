@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Storage;
 use Modules\Supplier\Entities\Supplier;
 
 class Order extends Model
@@ -29,6 +30,7 @@ class Order extends Model
     protected $fillable = [
         'order_latest_status',
         'order_notes',
+        'order_date',
         'order_payment_proof',
     ];
 

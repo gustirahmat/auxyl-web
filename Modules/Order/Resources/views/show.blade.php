@@ -55,7 +55,7 @@
                                         <div>
                                             <a href="{{ $order->order_payment_proof }}">Lihat</a>
                                             &nbsp;&nbsp;&nbsp;
-                                            <a href="#" onclick="alert('Segera hadir!')">Verifikasi</a>
+                                            <a href="{{ route('order.edit', $order->order_id) }}">Verifikasi</a>
                                         </div>
                                     </div>
                                 @else

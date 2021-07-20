@@ -28,6 +28,7 @@
         "scoutapp/scout-apm-laravel": "^1.7",
         "spatie/laravel-permission": "^4.0",
         "spatie/laravel-sluggable": "^2.3",
+        "yajra/laravel-datatables": "^1.5",
         "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
