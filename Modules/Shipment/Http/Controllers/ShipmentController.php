@@ -2,19 +2,23 @@
 
 namespace Modules\Shipment\Http\Controllers;
 
+use App\DataTables\OrderDeliveriesDataTable;
+use App\DataTables\OrdersDataTable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\Shipment\Entities\OrderDelivery;
 
 class ShipmentController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * @return Renderable
+     * @param OrderDeliveriesDataTable $dataTable
+     * @return mixed
      */
-    public function index()
+    public function index(OrderDeliveriesDataTable $dataTable)
     {
-        return view('shipment::index');
+        return $dataTable->render('shipment::index');
     }
 
     /**
@@ -48,12 +52,12 @@ class ShipmentController extends Controller
 
     /**
      * Show the form for editing the specified resource.
-     * @param int $id
+     * @param OrderDelivery $shipment
      * @return Renderable
      */
-    public function edit($id)
+    public function edit(OrderDelivery $shipment): Renderable
     {
-        return view('shipment::edit');
+        return view('shipment::update', ['delivery' => $shipment->loadMissing('relatedOrder.relatedCustomer')]);
     }
 
     /**

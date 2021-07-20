@@ -20,14 +20,11 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Application|Factory|View
+     * @param OrdersDataTable $dataTable
+     * @return mixed
      */
     public function index(OrdersDataTable $dataTable)
     {
-        // $orders = Order::all();
-
-        // return view('order::index', ['orders' => $orders]);
-
         return $dataTable->render('order::index');
     }
 

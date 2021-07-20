@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,6 +13,4 @@
 |
 */
 
-Route::prefix('shipment')->group(function() {
-    Route::get('/', 'ShipmentController@index');
-});
+Route::resource('shipment', 'ShipmentController');
