@@ -5,6 +5,7 @@ namespace Modules\Promo\Entities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Product\Entities\ProductStock;
 
 class Product extends Model
 {
@@ -48,5 +49,10 @@ class Product extends Model
     public function relatedPhotos(): HasMany
     {
         return $this->hasMany(ProductPhoto::class, 'product_id', 'product_id');
+    }
+
+    public function relatedStocks(): HasMany
+    {
+        return $this->hasMany(ProductStock::class, 'product_id', 'product_id')->latest();
     }
 }

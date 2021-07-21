@@ -8,14 +8,14 @@
 <div class="form-row">
     <div class="form-group col-md-6">
         <label for="promo_started_at" class="col-form-label">Tanggal Mulai Promo</label>
-        <input type="date" class="form-control @error('promo_started_at') is-invalid @enderror" name="promo_started_at" id="promo_started_at" value="{{ $promo->promo_started_at->format('Y-m-d') ?? old('promo_started_at') }}" required autofocus autocomplete="name">
+        <input type="date" class="form-control @error('promo_started_at') is-invalid @enderror" name="promo_started_at" id="promo_started_at" value="{{ isset($promo->promo_started_at) ? $promo->promo_started_at->format('Y-m-d') : old('promo_started_at') }}" required autofocus autocomplete="name">
         @error('promo_started_at')
         <div class="alert alert-danger">{{ $message }}</div>
         @enderror
     </div>
     <div class="form-group col-md-6">
         <label for="promo_finished_at" class="col-form-label">Tanggal Akhir Promo</label>
-        <input type="date" class="form-control @error('promo_finished_at') is-invalid @enderror" name="promo_finished_at" id="promo_finished_at" value="{{ $promo->promo_finished_at->format('Y-m-d') ?? old('promo_finished_at') }}" required autofocus autocomplete="name">
+        <input type="date" class="form-control @error('promo_finished_at') is-invalid @enderror" name="promo_finished_at" id="promo_finished_at" value="{{ isset($promo->promo_finished_at) ? $promo->promo_finished_at->format('Y-m-d') : old('promo_finished_at') }}" required autofocus autocomplete="name">
         @error('promo_finished_at')
         <div class="alert alert-danger">{{ $message }}</div>
         @enderror

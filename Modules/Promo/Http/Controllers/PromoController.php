@@ -4,6 +4,7 @@ namespace Modules\Promo\Http\Controllers;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use JD\Cloudder\Facades\Cloudder;
+use Modules\Promo\Entities\ProductStock;
 use Modules\Promo\Entities\Promo;
 use Modules\Promo\Entities\Product;
 use Throwable;
@@ -114,6 +116,21 @@ class PromoController extends Controller
                 ]);
             }
 
+            foreach ($promo->relatedProducts as $product) {
+                if ($product->product_stock - $product->pivot->promo_product_stock < 0) {
+                    return back()->withErrors('Stok produk tidak mencukupi jika diambil untuk promo ini')->withInput();
+                } else {
+                    $stock = new ProductStock([
+                        'stock_qty' => $product->pivot->promo_product_stock,
+                        'stock_status' => false,
+                        'stock_notes' => 'Stok diambil untuk promo ' . $promo->promo_name,
+                    ]);
+                    $product->relatedStocks()->save($stock);
+                    $product->product_stock = $product->product_stock - $product->pivot->promo_product_stock;
+                    $product->save();
+                }
+            }
+
             DB::commit();
 
             return redirect('promo')->with('success', 'Berhasil menambah promo ' . $promo->promo_name);
@@ -213,6 +230,16 @@ class PromoController extends Controller
                 Storage::disk('public')->delete($promo->promo_banner);
             }
             $promo->relatedProducts()->detach();
+            foreach ($promo->relatedProducts as $product) {
+                $stock = new ProductStock([
+                    'stock_qty' => $product->pivot->promo_product_stock,
+                    'stock_status' => true,
+                    'stock_notes' => 'Stok dikembalikan dari promo ' . $promo->promo_name . ' karena promo dibatalkan',
+                ]);
+                $product->relatedStocks()->save($stock);
+                $product->product_stock = $product->product_stock + $product->pivot->promo_product_stock;
+                $product->save();
+            }
             $promo->delete();
 
             DB::commit();
