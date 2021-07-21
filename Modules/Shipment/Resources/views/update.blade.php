@@ -42,37 +42,36 @@
                         <input type="date" class="form-control" id="delivery_max_date" value="{{ $delivery->delivery_max_date ? $delivery->delivery_max_date->format('Y-m-d') : '' }}" readonly>
                     </div>
                     <div class="form-group">
+                        <label for="delivery_order_number">Nomor Resi / Surat Jalan / Delivery Order</label>
+                        <input type="text" class="form-control @error('delivery_order_number') is-invalid @enderror" name="delivery_order_number" id="delivery_order_number" value="{{ $delivery->delivery_order_number ?? '' }}" @if($delivery->relatedOrder->order_latest_status == 2) required autofocus @else readonly @endif>
+                        @error('delivery_order_number')
+                        <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
                         <label for="delivery_act_date">Tanggal Aktual Pengiriman Paket</label>
-                        <input type="date" class="form-control @error('delivery_act_date') is-invalid @enderror" name="delivery_act_date" id="delivery_act_date" value="{{ $delivery->delivery_act_date ? $delivery->delivery_act_date->format('Y-m-d') : '' }}" required>
+                        <input type="date" class="form-control @error('delivery_act_date') is-invalid @enderror" name="delivery_act_date" id="delivery_act_date" value="{{ $delivery->delivery_act_date ? $delivery->delivery_act_date->format('Y-m-d') : today()->format('Y-m-d') }}" @if($delivery->relatedOrder->order_latest_status == 2) required @else readonly @endif>
                         @error('delivery_act_date')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-group">
                         <label for="delivery_est_date">Tanggal Estimasi Terima Paket</label>
-                        <input type="date" class="form-control @error('delivery_est_date') is-invalid @enderror" name="delivery_est_date" id="delivery_est_date" value="{{ $delivery->delivery_est_date ? $delivery->delivery_est_date->format('Y-m-d') : '' }}" required>
+                        <input type="date" class="form-control @error('delivery_est_date') is-invalid @enderror" name="delivery_est_date" id="delivery_est_date" value="{{ $delivery->delivery_est_date ? $delivery->delivery_est_date->format('Y-m-d') : '' }}" @if($delivery->relatedOrder->order_latest_status == 2) required @else readonly @endif>
                         @error('delivery_est_date')
                         <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>
-                    @if($delivery->delivery_rcv_date == 3)
+                    @if($delivery->relatedOrder->order_latest_status >= 3)
                         <div class="form-group">
                             <label for="delivery_rcv_date">Tanggal Aktual Terima Paket</label>
-                            <input type="date" class="form-control @error('delivery_rcv_date') is-invalid @enderror" name="delivery_rcv_date" id="delivery_rcv_date" value="{{ $delivery->delivery_rcv_date ? $delivery->delivery_rcv_date->format('Y-m-d') : '' }}" required>
+                            <input type="date" class="form-control @error('delivery_rcv_date') is-invalid @enderror" name="delivery_rcv_date" id="delivery_rcv_date" value="{{ $delivery->delivery_rcv_date ? $delivery->delivery_rcv_date->format('Y-m-d') : '' }}" @if($delivery->relatedOrder->order_latest_status > 3) readonly @else required @endif>
                             @error('delivery_rcv_date')
                             <div class="alert alert-danger">{{ $message }}</div>
                             @enderror
                         </div>
                     @endif
                     <button type="submit" class="btn btn-block btn-primary">Simpan Perubahan</button>
-                </form>
-            </div>
-            <div class="card-footer text-right">
-                <form action="{{ route('shipment.destroy', $delivery->delivery_id) }}" method="post" onsubmit="confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')">
-                    @csrf
-                    @method('DELETE')
-
-                    <button type="submit" class="btn btn-outline-danger">Batalkan Pesanan</button>
                 </form>
             </div>
         </div>

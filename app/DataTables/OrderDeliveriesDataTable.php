@@ -33,6 +33,11 @@ class OrderDeliveriesDataTable extends DataTable
                                 <button type="button" class="btn btn-secondary mx-1">Update Resi</button>
                             </a>';
                 }
+                if ($delivery->relatedOrder->order_latest_status == 3) {
+                    $btn .= '<a href="' . route('shipment.edit', $delivery->delivery_id) . '">
+                                <button type="button" class="btn btn-secondary mx-1">Update Pengiriman</button>
+                            </a>';
+                }
                 $btn .= '</div>';
                 return $btn;
             });

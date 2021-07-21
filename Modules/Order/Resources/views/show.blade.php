@@ -55,7 +55,9 @@
                                         <div>
                                             <a href="{{ $order->order_payment_proof }}">Lihat</a>
                                             &nbsp;&nbsp;&nbsp;
-                                            <a href="{{ route('order.edit', $order->order_id) }}">Verifikasi</a>
+                                            @if($order->order_latest_status == 1)
+                                                <a href="{{ route('order.edit', $order->order_id) }}">Verifikasi</a>
+                                            @endif
                                         </div>
                                     </div>
                                 @else
