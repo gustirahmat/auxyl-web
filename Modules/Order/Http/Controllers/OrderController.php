@@ -99,7 +99,7 @@ class OrderController extends Controller
             } else {
                 $status = new OrderStatus([
                     'status_code' => 1,
-                    'status_action' => 'Menunggu pembayaran',
+                    'status_action' => 'Verifikasi pembayaran gagal',
                     'status_comment' => $validated_data['status_reason']
                 ]);
             }
