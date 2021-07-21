@@ -31,7 +31,7 @@ class Employee extends Model
         'employee_address',
     ];
 
-    public function relatedProducts(): BelongsTo
+    public function relatedUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
