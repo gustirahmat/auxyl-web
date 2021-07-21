@@ -71,11 +71,11 @@
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownAdmin">
-                            <a class="dropdown-item" href="{{ url('admin') }}">
-                                Manajemen Role
-                            </a>
-                            <a class="dropdown-item" href="{{ url('employee') }}">
+                            <a class="dropdown-item" href="{{ url('admin/employee') }}">
                                 Manajemen Karyawan
+                            </a>
+                            <a class="dropdown-item" href="{{ url('admin/customer') }}">
+                                Manajemen Customer
                             </a>
                         </div>
                     </li>

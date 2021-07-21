@@ -1,21 +1,35 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Admin\Http\Controllers;
 
+use App\DataTables\CustomersDataTable;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 
 class CustomerController extends Controller
 {
     /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('password.confirm')->only('edit');
+    }
+
+    /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @param CustomersDataTable $dataTable
+     * @return mixed
      */
-    public function index()
+    public function index(CustomersDataTable $dataTable)
     {
-        //
+        return $dataTable->render('admin::customer.index');
     }
 
     /**
@@ -47,7 +61,7 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer)
     {
-        //
+        return view('admin::customer.show', ['customer' => $customer->loadMissing('relatedUser', 'relatedOrders')]);
     }
 
     /**

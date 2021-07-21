@@ -13,7 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('employee')->group(function() {
-    Route::get('/', 'EmployeeController@index');
-});
-Route::resource('employee', 'EmployeeController');
+Route::resource('admin/employee', 'EmployeeController');
