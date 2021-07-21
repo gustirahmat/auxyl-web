@@ -89,20 +89,22 @@ class OrderController extends Controller
             DB::beginTransaction();
 
             if ($validated_data['is_valid']) {
+                $order->order_latest_status = 2;
                 $status = new OrderStatus([
                     'status_code' => 2,
                     'status_action' => 'Pesanan dibayar',
                     'status_comment' => null
                 ]);
-                $order->order_latest_status = 2;
-                $order->save();
             } else {
+                $order->order_latest_status = 1;
+                $order->order_payment_proof = null;
                 $status = new OrderStatus([
                     'status_code' => 1,
                     'status_action' => 'Verifikasi pembayaran gagal',
                     'status_comment' => $validated_data['status_reason']
                 ]);
             }
+            $order->save();
             $order->relatedStatuses()->save($status);
 
             DB::commit();
