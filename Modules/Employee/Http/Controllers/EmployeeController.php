@@ -42,7 +42,7 @@ class EmployeeController extends Controller
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
+    public function index(): Renderable
     {
         $employees = Employee::all();
 
@@ -53,7 +53,7 @@ class EmployeeController extends Controller
      * Show the form for creating a new resource.
      * @return Renderable
      */
-    public function create()
+    public function create(): Renderable
     {
         return view('employee::create');
     }
@@ -63,7 +63,7 @@ class EmployeeController extends Controller
      * @param Request $request
      * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated_data = $this->validate_data($request);
 
@@ -95,12 +95,12 @@ class EmployeeController extends Controller
 
     /**
      * Show the specified resource.
-     * @param int $id
+     * @param Employee $employee
      * @return Renderable
      */
-    public function show($id)
+    public function show(Employee $employee): Renderable
     {
-        return view('employee::show');
+        return view('employee::show', ['employee' => $employee->loadMissing('relatedUser')]);
     }
 
     /**
@@ -148,7 +148,7 @@ class EmployeeController extends Controller
      * @param Employee $employee
      * @return RedirectResponse
      */
-    public function destroy(Employee $employee)
+    public function destroy(Employee $employee): RedirectResponse
     {
         try {
             DB::beginTransaction();
