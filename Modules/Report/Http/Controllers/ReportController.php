@@ -5,6 +5,7 @@ namespace Modules\Report\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Modules\Order\Entities\Order;
 
 class ReportController extends Controller
 {
@@ -14,7 +15,18 @@ class ReportController extends Controller
      */
     public function index()
     {
-        return view('report::index');
+        $orders = Order::with('relatedProducts')
+            ->whereIn('order_latest_status', [5,6])
+            ->get();
+
+        $hpp = 0;
+        foreach ($orders->where('order_latest_status', '=', 5) as $order) {
+            foreach ($order->relatedProducts as $product) {
+                $hpp += ($product->order_product_buy * $product->order_product_qty);
+            }
+        }
+
+        return view('report::index', ['orders' => $orders, 'hpp' => $hpp]);
     }
 
     /**

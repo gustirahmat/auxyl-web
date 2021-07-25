@@ -32,6 +32,7 @@ class OrderProduct extends Model
         'order_product_qty',
         'order_product_price',
         'order_product_subtotal',
+        'order_product_buy',
     ];
 
     /**
@@ -42,7 +43,8 @@ class OrderProduct extends Model
     protected $casts = [
         'order_product_qty' => 'integer',
         'order_product_price' => 'decimal:0',
-        'order_product_subtotal' => 'decimal:0'
+        'order_product_subtotal' => 'decimal:0',
+        'order_product_buy' => 'decimal:0',
     ];
 
     public function relatedOrder(): BelongsTo
