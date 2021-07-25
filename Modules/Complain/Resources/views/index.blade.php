@@ -4,15 +4,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title">
-                        Daftar Komplain
-                    </h5>
-                    <a href="{{ route('complain.create') }}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-plus-circle"></i>
-                        Tambah Komplain
-                    </a>
-                </div>
+                <h5 class="card-title">Daftar Komplain</h5>
             </div>
             <div class="card-body">
                 @include('layouts.flash-message')
@@ -38,11 +30,11 @@
                                             <button type="submit" class="btn btn-secondary mx-1">Detail</button>
                                         </a>
                                         <a href="{{ route('complain.edit', $complain->complain_id) }}">
-                                            <button type="button" class="btn btn-secondary mx-1">Edit</button>
+                                            <button type="button" class="btn btn-secondary mx-1">Update Status</button>
                                         </a>
                                     </div>
                                 </td>
-                                <td>{{ $complain->complain_status }}</td>
+                                <td>{{ $complain->complain_status_desc }}</td>
                                 <td>{{ $complain->relatedOrder->order_no }}</td>
                                 <td>{{ $complain->complain_category }}</td>
                                 <td>

@@ -3,15 +3,16 @@
 namespace Modules\Complain\Http\Controllers;
 
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use JD\Cloudder\Facades\Cloudder;
-use Modules\Category\Entities\Category;
 use Modules\Complain\Entities\OrderComplain;
+use Modules\Complain\Entities\OrderStatus;
+use Throwable;
 
 class ComplainController extends Controller
 {
@@ -26,22 +27,11 @@ class ComplainController extends Controller
         $this->middleware('password.confirm')->only('edit');
     }
 
-    protected function validate_data($request, $category_id = null)
-    {
-        $validate = [
-            "category_name" => "bail|required|string|max:191|unique:categories,category_name,{$category_id},category_id",
-            "category_icon" => "nullable|image|max:2048",
-            "category_gender" => "required|integer",
-        ];
-
-        return $request->validate($validate);
-    }
-
     /**
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
+    public function index(): Renderable
     {
         $complains = OrderComplain::all();
 
@@ -60,112 +50,69 @@ class ComplainController extends Controller
     /**
      * Store a newly created resource in storage.
      * @param Request $request
-     * @return Renderable
+     * @return void
      */
     public function store(Request $request)
     {
-        $validated_data = $this->validate_data($request);
-
-        try {
-            DB::beginTransaction();
-
-            if ($request->has('category_icon')) {
-                if (App::environment('production')) {
-                    $image_name = $request->file('category_icon')->getRealPath();
-                    Cloudder::upload($image_name, null, array(
-                        'folder' => 'images/category',
-                        'overwrite' => true,
-                        'resource_type' => 'image'
-                    ));
-
-                    list($width, $height) = getimagesize($image_name);
-                    $category_icon = Cloudder::secureShow(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);
-                    $path = $category_icon;
-                } else {
-                    $image_name = Str::slug($validated_data['category_name']) . '.' . $request->file('category_icon')->getClientOriginalExtension();
-                    $path = $request->file('category_icon')->storeAs(
-                        'images/category', $image_name, 'public'
-                    );
-                }
-
-                $validated_data['category_icon'] = $path;
-            }
-            $category = Category::create($validated_data);
-
-            DB::commit();
-
-            return redirect('category')->with('success', 'Berhasil menambah kategori ' . $category->category_name);
-        } catch (Throwable $e) {
-            DB::rollBack();
-
-            return back()->withErrors($e->getMessage())->withInput();
-        }
+        //
     }
 
     /**
      * Show the specified resource.
-     * @param int $id
+     * @param OrderComplain $complain
      * @return Renderable
      */
-    public function show($id)
+    public function show(OrderComplain $complain)
     {
-        return view('complain::show');
+        return view('complain::show', [
+            'complain' => $complain->loadMissing('relatedOrder'),
+            'order' => $complain->relatedOrder
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
-     * @param int $id
+     * @param OrderComplain $complain
      * @return Renderable
      */
-    public function edit($id)
+    public function edit(OrderComplain $complain)
     {
-        return view('complain::edit');
+        return view('complain::update', ['complain' => $complain->loadMissing('relatedOrder.relatedCustomer')]);
     }
 
     /**
      * Update the specified resource in storage.
      * @param Request $request
-     * @param int $id
-     * @return Renderable
+     * @param OrderComplain $complain
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, OrderComplain $complain): RedirectResponse
     {
-        $validated_data = $this->validate_data($request, $category->category_id);
+        $validated_data = $request->validate([
+            'complain_status' => 'bail|required|integer',
+            'complain_resolution' => 'required|string|max:500'
+        ]);
 
         try {
             DB::beginTransaction();
 
-            if ($request->has('category_icon')) {
-                if (App::environment('production')) {
-                    Cloudder::delete($category->category_icon, array(
-                        'resource_type' => 'image'
-                    ));
-
-                    $image_name = $request->file('category_icon')->getRealPath();
-                    Cloudder::upload($image_name, null, array(
-                        'folder' => 'images/category',
-                        'overwrite' => true,
-                        'resource_type' => 'image'
-                    ));
-
-                    list($width, $height) = getimagesize($image_name);
-                    $category_icon = Cloudder::secureShow(Cloudder::getPublicId(), ["width" => $width, "height" => $height]);
-                    $path = $category_icon;
-                } else {
-                    Storage::disk('public')->delete($category->category_icon);
-                    $image_name = Str::slug($validated_data['category_name']) . '.' . $request->file('category_icon')->getClientOriginalExtension();
-                    $path = $request->file('category_icon')->storeAs(
-                        'images/category', $image_name, 'public'
-                    );
-                }
-
-                $validated_data['category_icon'] = $path;
+            if ($validated_data['complain_status'] == 3) {
+                $complain->loadMissing('relatedOrder.relatedStatuses');
+                $order = $complain->relatedOrder;
+                $order->order_latest_status = 5;
+                $status = new OrderStatus([
+                    'status_code' => 5,
+                    'status_action' => 'Pesanan selesai',
+                    'status_comment' => $validated_data['complain_resolution']
+                ]);
+                $order->save();
+                $order->relatedStatuses()->save($status);
             }
-            $category->update($validated_data);
+            $complain->update($validated_data);
 
             DB::commit();
 
-            return redirect()->route('category.index')->with('success', 'Berhasil mengubah kategori ' . $category->category_name);
+            return redirect()->route('complain.show', $complain->complain_id)->with('success', 'Berhasil memperbarui status komplain untuk pesanan ini');
         } catch (Throwable $e) {
             DB::rollBack();
 
@@ -175,30 +122,11 @@ class ComplainController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * @param int $id
-     * @return Renderable
+     * @param OrderComplain $complain
+     * @return void
      */
-    public function destroy($id)
+    public function destroy(OrderComplain $complain)
     {
-        try {
-            DB::beginTransaction();
-
-            if (App::environment('production')) {
-                Cloudder::delete($category->category_icon, array(
-                    'resource_type' => 'image'
-                ));
-            } else {
-                Storage::disk('public')->delete($category->category_icon);
-            }
-            $category->delete();
-
-            DB::commit();
-
-            return redirect()->route('category.index')->with('success', 'Berhasil menghapus kategori ' . $category->category_name);
-        } catch (Throwable $e) {
-            DB::rollBack();
-
-            return back()->withErrors($e->getMessage());
-        }
+        //
     }
 }

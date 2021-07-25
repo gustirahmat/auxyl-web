@@ -24,6 +24,7 @@ class OrderComplain extends Model
         'complain_status',
         'complain_category',
         'complain_description',
+        'complain_resolution',
         'complain_attachment',
     ];
 
@@ -35,6 +36,39 @@ class OrderComplain extends Model
     protected $casts = [
         'complain_status' => 'integer'
     ];
+
+    public function getComplainDescriptionAttribute($value): ?string
+    {
+        return ucfirst($value);
+    }
+
+    public function getComplainResolutionAttribute($value): ?string
+    {
+        return $value ? ucfirst($value) : 'Belum ada.';
+    }
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'complain_status_desc',
+    ];
+
+    public function getComplainStatusDescAttribute(): string
+    {
+        $status = $this->complain_status;
+        if ($status == 1) {
+            return 'Open';
+        } elseif ($status == 2) {
+            return 'In Progress';
+        } elseif ($status == 3) {
+            return 'Closed';
+        }
+
+        return 'Undefined';
+    }
 
     public function relatedOrder(): BelongsTo
     {
