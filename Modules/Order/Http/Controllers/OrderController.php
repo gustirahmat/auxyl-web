@@ -121,10 +121,29 @@ class OrderController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Order $order
-     * @return Response
+     * @return RedirectResponse
      */
-    public function destroy(Order $order)
+    public function destroy(Order $order): RedirectResponse
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $order->order_latest_status = 7;
+            $status = new OrderStatus([
+                'status_code' => 7,
+                'status_action' => 'Pesanan dibatalkan',
+                'status_comment' => 'Pesanan dibatalkan manual oleh Admin'
+            ]);
+            $order->save();
+            $order->relatedStatuses()->save($status);
+
+            DB::commit();
+
+            return redirect()->route('order.show', $order->order_id)->with('success', 'Berhasil memperbarui status pesanan');
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            return back()->withErrors($e->getMessage())->withInput();
+        }
     }
 }

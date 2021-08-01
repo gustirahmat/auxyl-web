@@ -43,6 +43,7 @@ class Order extends Model
         'order_latest_status' => 'integer',
         'order_no' => 'string',
         'order_total' => 'decimal:0',
+        'order_ongkir' => 'decimal:0',
     ];
 
     /**
@@ -78,18 +79,21 @@ class Order extends Model
 
     public function getOrderStatusAttribute(): string
     {
-        if ($this->order_latest_status == 1) {
+        $status = $this->order_latest_status;
+        if ($status == 1) {
             return 'Pesanan menunggu pembayaran';
-        } elseif ($this->order_latest_status == 2) {
+        } elseif ($status == 2) {
             return 'Pesanan dibayar';
-        } elseif ($this->order_latest_status == 3) {
+        } elseif ($status == 3) {
             return 'Pesanan dikirim';
-        } elseif ($this->order_latest_status == 4) {
+        } elseif ($status == 4) {
             return 'Pesanan diterima';
-        } elseif ($this->order_latest_status == 5) {
+        } elseif ($status == 5) {
             return 'Pesanan selesai';
-        } elseif ($this->order_latest_status == 6) {
+        } elseif ($status == 6) {
             return 'Pesanan dikomplain';
+        } elseif ($status == 7) {
+            return 'Pesanan dibatalkan';
         }
 
         return 'Pesanan diproses';

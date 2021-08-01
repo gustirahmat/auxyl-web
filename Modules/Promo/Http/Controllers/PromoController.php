@@ -148,7 +148,7 @@ class PromoController extends Controller
      */
     public function show(Promo $promo): Renderable
     {
-        return view('promo::show', ['promo' => $promo]);
+        return view('promo::show', ['promo' => $promo->loadMissing('relatedProducts')]);
     }
 
     /**
