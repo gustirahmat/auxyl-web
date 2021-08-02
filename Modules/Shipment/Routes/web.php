@@ -13,4 +13,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('shipment/finished/{delivery_id}', 'ShipmentFinishedController')->name('shipment.finished');
 Route::resource('shipment', 'ShipmentController');
