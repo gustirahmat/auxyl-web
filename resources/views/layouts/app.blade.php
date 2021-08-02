@@ -122,7 +122,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('report') }}">
+                        <a class="nav-link" href="{{ route('report.index', ['year' => today()->year, 'month' => today()->month]) }}">
                             <i class="bi bi-bar-chart"></i>
                             Laporan
                         </a>

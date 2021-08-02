@@ -7,7 +7,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="card-title">Laporan Laba Rugi</h5>
-                        <p class="card-subtitle">Periode {{ today()->translatedFormat('F Y') }}</p>
+                        <p class="card-subtitle">Periode {{ $month }} {{ $year }}</p>
                     </div>
                     <button type="button"
                             class="btn btn-outline-primary"
@@ -37,47 +37,15 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <th colspan="2" style="text-align: left">Penjualan</th>
+                            <th colspan="2" style="text-align: left">Pendapatan</th>
                         </tr>
                         <tr>
                             <td>Penjualan Bersih</td>
-                            <th class="text-right" style="text-align: right">{{ number_format($orders->sum('order_total') ?? 0, 0, ',', '.') }}</th>
+                            <th class="text-right" style="text-align: right">{{ number_format(($orders->sum('order_total') ?? 0) - ($orders->sum('order_ongkir') ?? 0), 0, ',', '.') }}</th>
                         </tr>
                         <tr>
-                            <td>Dikurangi : Retur Penjualan</td>
-                            <th class="text-right" style="text-align: right">{{ number_format($orders->where('order_latest_status', '=', 6)->sum('order_total') ?? 0, 0, ',', '.') }}</th>
-                        </tr>
-                        <tr>
-                            <td>Penjualan Bersih</td>
-                            <th class="text-right" style="text-align: right">{{ number_format($orders->where('order_latest_status', '=', 5)->sum('order_total') - $orders->where('order_latest_status', '=', 6)->sum('order_total') ?? 0, 0, ',', '.') }}</th>
-                        </tr>
-                        <tr>
-                            <td>Harga Pokok Penjualan (HPP)</td>
-                            <th class="text-right" style="text-align: right">{{ number_format($hpp ?? 0, 0, ',', '.') }}</th>
-                        </tr>
-                        <tr>
-                            <td>Laba Kotor</td>
-                            <th class="text-right" style="text-align: right">{{ number_format(($orders->where('order_latest_status', '=', 5)->sum('order_total') - $orders->where('order_latest_status', '=', 6)->sum('order_total')) - $hpp ?? 0, 0, ',', '.') }}</th>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <hr>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th colspan="2" style="text-align: left">Beban Operasional</th>
-                        </tr>
-                        <tr>
-                            <td>Beban Upah dan Gaji</td>
-                            <th class="text-right" style="text-align: right">{{ number_format(3000000, 0, ',', '.') }}</th>
-                        </tr>
-                        <tr>
-                            <td>Beban Iklan</td>
-                            <th class="text-right" style="text-align: right">{{ number_format(0, 0, ',', '.') }}</th>
-                        </tr>
-                        <tr>
-                            <td>Total Biaya Operasional</td>
-                            <th class="text-right" style="text-align: right">{{ number_format(3000000, 0, ',', '.') }}</th>
+                            <td>Total Pendapatan</td>
+                            <th class="text-right" style="text-align: right">{{ number_format(($orders->sum('order_total') ?? 0) - ($orders->sum('order_ongkir') ?? 0), 0, ',', '.') }}</th>
                         </tr>
                         <tr>
                             <td colspan="2">
@@ -88,8 +56,20 @@
                             <th colspan="2" style="text-align: left">Pengeluaran dan Kerugian Lainnya</th>
                         </tr>
                         <tr>
-                            <td>Kerugian Karena Retur Penjualan</td>
-                            <th class="text-right" style="text-align: right">{{ number_format($orders->where('order_latest_status', '=', 6)->count() * 20000 ?? 0, 0, ',', '.') }}</th>
+                            <td>Harga Pokok Penjualan (HPP)</td>
+                            <th class="text-right" style="text-align: right">{{ number_format($hpp_finished ?? 0, 0, ',', '.') }}</th>
+                        </tr>
+                        <tr>
+                            <td>Beban Ongkir</td>
+                            <th class="text-right" style="text-align: right">{{ number_format($orders->sum('order_ongkir') ?? 0, 0, ',', '.') }}</th>
+                        </tr>
+                        <tr>
+                            <td>Retur Penjualan</td>
+                            <th class="text-right" style="text-align: right">{{ number_format($hpp_returned ?? 0, 0, ',', '.') }}</th>
+                        </tr>
+                        <tr>
+                            <td>Total Pengeluaran</td>
+                            <th class="text-right" style="text-align: right">{{ number_format(($hpp_finished ?? 0) + ($orders->sum('order_ongkir') ?? 0) + ($hpp_returned ?? 0), 0, ',', '.') }}</th>
                         </tr>
                         <tr>
                             <td colspan="2">
@@ -100,10 +80,9 @@
                             <th style="text-align: left">Pendapatan Bersih</th>
                             <th class="text-right" style="text-align: right">
                                 @php
-                                    $gross_profit = ($orders->where('order_latest_status', '=', 5)->sum('order_total') - $orders->where('order_latest_status', '=', 6)->sum('order_total')) - $hpp;
-                                    $operational_cost = 3000000;
-                                    $loss = $orders->where('order_latest_status', '=', 6)->count() * 20000;
-                                    $nett_profit = $gross_profit - ($operational_cost + $loss)
+                                    $gross_profit = ($orders->sum('order_total') ?? 0) - ($orders->sum('order_ongkir') ?? 0);
+                                    $loss = ($hpp_finished ?? 0) + ($orders->sum('order_ongkir') ?? 0) + ($hpp_returned ?? 0);
+                                    $nett_profit = $gross_profit - $loss
                                 @endphp
                                 {{ number_format($nett_profit ?? 0, 0, ',', '.') }}
                             </th>
@@ -111,6 +90,24 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end align-items-center">
+                @if($month == today()->format('F'))
+                    <a href="{{ route('report.index', ['year' => today()->subMonth()->year, 'month' => today()->subMonth()->month]) }}">
+                        <button type="button" class="btn btn-secondary mx-1">
+                            <i class="bi bi-arrow-left"></i>
+                            Bulan Sebelumnya
+                        </button>
+                    </a>
+                @endif
+                @if($month !== today()->format('F'))
+                    <a href="{{ route('report.index', ['year' => today()->year, 'month' => today()->month]) }}">
+                        <button type="button" class="btn btn-secondary mx-1">
+                            Bulan Sekarang
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </a>
+                @endif
             </div>
         </div>
     </div>
