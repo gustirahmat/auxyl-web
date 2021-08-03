@@ -27,7 +27,7 @@
                             <th colspan="2">Laporan Laba Rugi</th>
                         </tr>
                         <tr>
-                            <th colspan="2">Periode {{ today()->translatedFormat('F Y') }}</th>
+                            <th colspan="2">Periode {{ $month }} {{ $year }}</th>
                         </tr>
                         <tr>
                             <td colspan="2">
@@ -40,11 +40,11 @@
                             <th colspan="2" style="text-align: left">Pendapatan</th>
                         </tr>
                         <tr>
-                            <td>Penjualan Bersih</td>
-                            <th class="text-right" style="text-align: right">{{ number_format(($orders->sum('order_total') ?? 0) - ($orders->sum('order_ongkir') ?? 0), 0, ',', '.') }}</th>
+                            <td class="text-muted">Penjualan Bersih</td>
+                            <td class="text-muted text-right" style="text-align: right">{{ number_format(($orders->sum('order_total') ?? 0) - ($orders->sum('order_ongkir') ?? 0), 0, ',', '.') }}</td>
                         </tr>
                         <tr>
-                            <td>Total Pendapatan</td>
+                            <th style="text-align: left">Total Pendapatan</th>
                             <th class="text-right" style="text-align: right">{{ number_format(($orders->sum('order_total') ?? 0) - ($orders->sum('order_ongkir') ?? 0), 0, ',', '.') }}</th>
                         </tr>
                         <tr>
@@ -56,19 +56,19 @@
                             <th colspan="2" style="text-align: left">Pengeluaran dan Kerugian Lainnya</th>
                         </tr>
                         <tr>
-                            <td>Harga Pokok Penjualan (HPP)</td>
-                            <th class="text-right" style="text-align: right">{{ number_format($hpp_finished ?? 0, 0, ',', '.') }}</th>
+                            <td class="text-muted">Harga Pokok Penjualan (HPP)</td>
+                            <td class="text-muted text-right" style="text-align: right">{{ number_format($hpp_finished ?? 0, 0, ',', '.') }}</td>
                         </tr>
                         <tr>
-                            <td>Beban Ongkir</td>
-                            <th class="text-right" style="text-align: right">{{ number_format($orders->sum('order_ongkir') ?? 0, 0, ',', '.') }}</th>
+                            <td class="text-muted">Beban Ongkir</td>
+                            <td class="text-muted text-right" style="text-align: right">{{ number_format($orders->sum('order_ongkir') ?? 0, 0, ',', '.') }}</td>
                         </tr>
                         <tr>
-                            <td>Retur Penjualan</td>
-                            <th class="text-right" style="text-align: right">{{ number_format($hpp_returned ?? 0, 0, ',', '.') }}</th>
+                            <td class="text-muted">Retur Penjualan</td>
+                            <td class="text-muted text-right" style="text-align: right">{{ number_format($hpp_returned ?? 0, 0, ',', '.') }}</td>
                         </tr>
                         <tr>
-                            <td>Total Pengeluaran</td>
+                            <th style="text-align: left">Total Pengeluaran</th>
                             <th class="text-right" style="text-align: right">{{ number_format(($hpp_finished ?? 0) + ($orders->sum('order_ongkir') ?? 0) + ($hpp_returned ?? 0), 0, ',', '.') }}</th>
                         </tr>
                         <tr>
