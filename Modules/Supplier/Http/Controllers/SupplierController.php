@@ -70,7 +70,7 @@ class SupplierController extends Controller
 
             DB::commit();
 
-            return redirect()->route('supplier.index')->with('success', 'Berhasil menambah supplier ' . $supplier->supplier_name);
+            return redirect()->route('supplier.index')->with('success', 'Berhasil menambahkan supplier ' . $supplier->supplier_name);
         } catch (Throwable $e) {
             DB::rollBack();
 
