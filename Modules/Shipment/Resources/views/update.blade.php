@@ -49,6 +49,13 @@
                         @enderror
                     </div>
                     <div class="form-group">
+                        <label for="delivery_fee">Ongkos Kirim / Delivery Fee</label>
+                        <input type="number" min="0" max="100000000" class="form-control @error('delivery_fee') is-invalid @enderror" name="delivery_fee" id="delivery_fee" value="{{ $delivery->relatedOrder->order_ongkir ?? 0 }}" @if($delivery->relatedOrder->order_latest_status == 2) required @else readonly @endif>
+                        @error('delivery_fee')
+                        <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
                         <label for="delivery_act_date">Tanggal Aktual Pengiriman Paket</label>
                         <input type="date" class="form-control @error('delivery_act_date') is-invalid @enderror" name="delivery_act_date" id="delivery_act_date" value="{{ $delivery->delivery_act_date ? $delivery->delivery_act_date->format('Y-m-d') : today()->format('Y-m-d') }}" @if($delivery->relatedOrder->order_latest_status == 2) required @else readonly @endif>
                         @error('delivery_act_date')

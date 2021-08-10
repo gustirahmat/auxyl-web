@@ -3,9 +3,7 @@
 namespace Modules\Shipment\Http\Controllers;
 
 use App\DataTables\OrderDeliveriesDataTable;
-use App\DataTables\OrdersDataTable;
 use Illuminate\Contracts\Support\Renderable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -71,10 +69,11 @@ class ShipmentController extends Controller
      * @param OrderDelivery $shipment
      * @return RedirectResponse
      */
-    public function update(Request $request, OrderDelivery $shipment)
+    public function update(Request $request, OrderDelivery $shipment): RedirectResponse
     {
         $validated_data = $request->validate([
             'delivery_order_number' => 'bail|required|string|max:191',
+            'delivery_fee' => 'required|integer|min:0|max:100000000',
             'delivery_act_date' => 'required|date',
             'delivery_est_date' => 'required|date',
             'delivery_rcv_date' => 'nullable|date',
@@ -98,6 +97,7 @@ class ShipmentController extends Controller
                     'status_action' => 'Pesanan dikirim',
                     'status_comment' => 'Dikirim tanggal ' . $validated_data['delivery_act_date']
                 ]);
+                $shipment->relatedOrder->order_ongkir = $validated_data['delivery_fee'];
                 $shipment->relatedOrder->order_latest_status = 3;
             }
             $shipment->relatedOrder->relatedStatuses()->save($status);

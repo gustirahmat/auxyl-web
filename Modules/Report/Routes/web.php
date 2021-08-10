@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,5 +14,5 @@
 */
 
 Route::prefix('report')->group(function() {
-    Route::get('/', 'ReportController@index');
+    Route::get('/{year}/{month}', 'ReportController@index')->name('report.index');
 });

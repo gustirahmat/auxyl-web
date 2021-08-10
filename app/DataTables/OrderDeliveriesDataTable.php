@@ -38,6 +38,12 @@ class OrderDeliveriesDataTable extends DataTable
                                 <button type="button" class="btn btn-secondary mx-1">Update Pengiriman</button>
                             </a>';
                 }
+                if ($delivery->relatedOrder->order_latest_status == 4) {
+                    $btn .= '<form id="finished-form" action="' . route('shipment.finished', $delivery->delivery_id) .'" method="POST" onsubmit="confirm(\'Apakah kamu yakin ingin menyelesaikan pesanan ini ?\')">
+                                ' . csrf_field() . '
+                                <button type="submit" class="btn btn-secondary mx-1">Selesaikan Pesanan</button>
+                            </form>';
+                }
                 $btn .= '</div>';
                 return $btn;
             });

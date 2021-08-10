@@ -11,22 +11,40 @@ class ReportController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * @param int $year
+     * @param int $month
+     * @param Request $request
      * @return Renderable
      */
-    public function index()
+    public function index(int $year, int $month, Request $request): Renderable
     {
         $orders = Order::with('relatedProducts')
             ->whereIn('order_latest_status', [5,6])
+            ->whereYear('order_date', $year)
+            ->whereMonth('order_date', $month)
             ->get();
 
-        $hpp = 0;
+        $hpp_finished = 0;
         foreach ($orders->where('order_latest_status', '=', 5) as $order) {
             foreach ($order->relatedProducts as $product) {
-                $hpp += ($product->order_product_buy * $product->order_product_qty);
+                $hpp_finished += ($product->order_product_buy * $product->order_product_qty);
             }
         }
 
-        return view('report::index', ['orders' => $orders, 'hpp' => $hpp]);
+        $hpp_returned = 0;
+        foreach ($orders->where('order_latest_status', '=', 6) as $order) {
+            foreach ($order->relatedProducts as $product) {
+                $hpp_returned += ($product->order_product_buy * $product->order_product_qty);
+            }
+        }
+
+        return view('report::index', [
+            'year' => $year,
+            'month' => date("F", mktime(0, 0, 0, $month, 1, $year)),
+            'orders' => $orders,
+            'hpp_finished' => $hpp_finished,
+            'hpp_returned' => $hpp_returned,
+        ]);
     }
 
     /**
