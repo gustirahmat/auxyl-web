@@ -100,7 +100,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('promo') }}">
                             <i class="bi bi-patch-minus"></i>
-                            Promo
+                            Promosi
                         </a>
                     </li>
                     <li class="nav-item">
