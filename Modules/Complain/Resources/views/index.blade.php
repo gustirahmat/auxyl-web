@@ -36,7 +36,7 @@
                                 </td>
                                 <td>{{ $complain->complain_status_desc }}</td>
                                 <td>{{ $complain->relatedOrder->order_no }}</td>
-                                <t>{{ $complain->complain_category }}</t   d>
+                                <td>{{ $complain->complain_category }}</td>
                                 <td>
                                     {{ $complain->complain_description }}
                                     @isset($complain->complain_attachment)
