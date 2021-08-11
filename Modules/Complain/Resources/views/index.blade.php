@@ -22,7 +22,7 @@
                         </thead>
                         <tbody>
                         @forelse($complains as $complain)
-                        {{$complain->relatedOrder->sortBy('order_no', [], true);}}
+                        {{$complain->relatedOrder->sortBy('order_no', [], true)}}
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
