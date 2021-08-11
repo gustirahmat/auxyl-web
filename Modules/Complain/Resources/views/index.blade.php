@@ -22,6 +22,7 @@
                         </thead>
                         <tbody>
                         @forelse($complains as $complain)
+                        {{$complain->relatedOrder->sortBy('order_no', [], true);}}
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>
@@ -36,7 +37,7 @@
                                 </td>
                                 <td>{{ $complain->complain_status_desc }}</td>
                                 <td>{{ $complain->relatedOrder->order_no }}</td>
-                                <td>{{ $complain->complain_category }}</td>
+                                <t>{{ $complain->complain_category }}</t   d>
                                 <td>
                                     {{ $complain->complain_description }}
                                     @isset($complain->complain_attachment)
