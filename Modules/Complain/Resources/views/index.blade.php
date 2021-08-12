@@ -13,27 +13,19 @@
                         <thead>
                         <tr>
                             <th>No.</th>
-                            <th>Aksi</th>
+                            
                             <th>Status</th>
                             <th>Nomor Pesanan</th>
                             <th>Kategori</th>
                             <th>Penjelasan</th>
+                            <th>Aksi</th>
                         </tr>
                         </thead>
                         <tbody>
                         @forelse($complains as $complain)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>
-                                    <div class="btn-group" role="group" aria-label="Group Button {{ $complain->complain_id }}">
-                                        <a href="{{ route('complain.show', $complain->complain_id) }}">
-                                            <button type="submit" class="btn btn-secondary mx-1">Detail</button>
-                                        </a>
-                                        <a href="{{ route('complain.edit', $complain->complain_id) }}">
-                                            <button type="button" class="btn btn-secondary mx-1">Update Status</button>
-                                        </a>
-                                    </div>
-                                </td>
+                                
                                 <td>{{ $complain->complain_status_desc }}</td>
                                 <td>{{ $complain->relatedOrder->order_no }}</td>
                                 <td>{{ $complain->complain_category }}</td>
@@ -45,6 +37,16 @@
                                             Lampiran
                                         </a>
                                     @endisset
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Group Button {{ $complain->complain_id }}">
+                                        <a href="{{ route('complain.show', $complain->complain_id) }}">
+                                            <button type="submit" class="btn btn-secondary mx-1">Detail</button>
+                                        </a>
+                                        <a href="{{ route('complain.edit', $complain->complain_id) }}">
+                                            <button type="button" class="btn btn-secondary mx-1">Update Status</button>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
