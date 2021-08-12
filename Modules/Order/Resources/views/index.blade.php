@@ -4,7 +4,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title">Daftar Pesanan</h5>
+                <h5 class="card-title">List Pesanan</h5>
             </div>
             <div class="card-body">
                 @include('layouts.flash-message')
