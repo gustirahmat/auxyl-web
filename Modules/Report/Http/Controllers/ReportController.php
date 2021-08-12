@@ -36,6 +36,11 @@ class ReportController extends Controller
             foreach ($order->relatedProducts as $product) {
                 $hpp_returned += ($product->order_product_buy * $product->order_product_qty);
             }
+            foreach ($orders->where('order_latest_status', '=', 5) as $order) {
+                foreach ($order->relatedProducts as $product) {
+                    $hpp_finished += ($product->order_product_buy * $product->order_product_qty);
+                }
+            }
         }
 
         return view('report::index', [
